@@ -19,7 +19,7 @@
   <!-- Specify the app entry point class.                         -->
   <entry-point class="mycompany.client.HelloApp"/>
 
-  <!-- IMPLICICIT Specify the paths for translatable code                    -->
+  <!-- IMPLICIT Specify the paths for translatable code                    -->
   <source path="client"/>
 
   <!-- allow Super Dev Mode -->
