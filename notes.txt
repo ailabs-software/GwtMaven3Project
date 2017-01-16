@@ -1,0 +1,67 @@
+
+RESOURCES:
+https://maven.apache.org/guides/introduction/introduction-to-the-pom.html
+
+[19:49] <adlaistevenson> Noted, this is good. Now I just have to figure out how to use inherits in the Gwt.xml file.
+[19:49] <adlaistevenson> Yeah
+[19:49] <adlaistevenson> That's actgually perfect, I will just re-render
+[19:50] <adlaistevenson> I need to learn how to set the class path from pom.xml, or hack it through JVM params.
+[19:51] <niloc132> the ctor idea comes with the assumption that you'll just remove the Repeater from the dom and replace it, rather than rebuild
+[19:51] <niloc132> no, you dont
+[19:52] <niloc132> you already have one .gwt.xml for one set of packages, just make another for the new different set, and make one <inherits> the other
+[19:52] <adlaistevenson> What I am missing, is how the heck I tell GWT where to look for the other -- if it is in a completely different directory.
+[19:53] <niloc132> ok, so both are in src/main/java/... somewhere, right?
+[19:53] <adlaistevenson> No
+[19:53] <niloc132> or are they different projects? non-maven or cheating with totally different source dirs?
+[19:55] <adlaistevenson> What I am trying to accomplish if sharing of library code between two separate projects (different pom files)
+[19:56] <niloc132> ok, so step one is making sure the "upstream" library project creates a jar with sources in it (.java and .gwt.xml)
+[19:57] <adlaistevenson> This is difficult to explain, but essentially the reusable stuff is in /opt/deployment/applications/shopwindow/modular/reusable, where one of the project is at: /opt/deployment/applications/shopwindow/modular/ContentCentral (pom.xml and src/java/main live here)
+[19:57] <niloc132> downstream then uses maven deps to include upstream, and then inherits it as well
+[19:57] <niloc132> so i assume two distinct pom.xmls (plus possible a third parent, maybe a 4th bom if you roll like that)
+[19:58] <niloc132> and in turn two artifacts, a jar for the lib, and a war or jar or zip or ear for the actual webapp
+[19:59] <adlaistevenson> Yes, two distinct pom.xmls
+[19:59] <adlaistevenson> But that's for both compiled applications
+[19:59] <adlaistevenson> I don't have a pom for the library
+[20:01] <niloc132> but it is shared between the two compiled apps?
+[20:01] <niloc132> so ignoring gwt entirely, is it configured so javac itself is happy?
+[20:01] <adlaistevenson> I don't think so, but I will admit I am without a clue here
+[20:02] <adlaistevenson> I never got very far this morning
+[20:02] <niloc132> ok
+[20:02] <niloc132> so make a third pom, and its own src/main/java for the sources that belong there
+[20:02] <niloc132> likely you want a root pom that has a <modules> tag, with an entry for each of these three
+[20:02] <niloc132> so that building that one causes all to be built
+[20:03] <adlaistevenson> Okay, maybe I should do this as a github repo so it is easy to share WTF is going on
+[20:04] <niloc132> yeah, dumb it down a lot - one class in each proj, so that the two apps require the lib to be built and on the classpath
+[20:04] <niloc132> and gwt to be added later, if at all (but i suspect it will be clear)
+[20:06] <adlaistevenson> I don't mind building each separately. So I guess I will add a Maven dependency to the library dir, and Maven will be happy to see the third pom.xml
+[20:07] <niloc132> yes, but when you change the lib, you'll have to build it and then the dependent projects
+[20:07] <niloc132> as long as you are expecting three commands to change one thing
+[20:08] <niloc132> ...a maven-aware ide ought to just pick up the change without the rebuild, but it will cheat a bit to get there and only make one classpath based on how it understands the project structure
+[20:08] <adlaistevenson> That's probably good, as I will save time compiling. And I can always have a shell script ;-)
+[20:09] <niloc132> eeeeh.
+[20:09] <niloc132> ok, last try to convince you, then i give up
+[20:09] <niloc132> assume three sub-projects, lib, projA and projB
+[20:09] <niloc132> (give up = let you win)
+[20:10] <niloc132> mvn clean install -am -pl projA means build projA and everything it uses
+[20:10] <niloc132> i.e. "lib and projA"
+[20:10] <niloc132> so if you only want one proj rebuilt, thats how you get there
+[20:10] <niloc132> -am for "also make" -pl for "project list"
+[20:11] <niloc132> mvn -rf projA then means "resume from" the linear order of projects, often used to pick up in a large build where you left off after fixing some error
+[20:11] <adlaistevenson> Okay, sold -- provided I can get it working
+[20:11] <niloc132> haha
+[20:12] <niloc132> 4 poms, a root one with <packaging>pom</packaging>, a lib (packaging is jar, implicitly), and then the two "actual" projects
+[20:12] <niloc132> root needs <modules> with a <module> entry for each child, in some sane-ish order
+[20:12] <adlaistevenson> I definitely don't want to to re-inventing the wheel as an oval here, so I will try the 3-pom approach.
+[20:12] <adlaistevenson> Err 4, the root
+[20:12] <niloc132> and then stick a java class in each src/main/java for verifying that deps made sense
+[20:13] <adlaistevenson> Should I be looking at Viola for inspiration?
+[20:14] <niloc132> if by "inspiration" you mean "stealing basic structural stuff"... maybe, but i wouldnt
+[20:14] <niloc132> lemme point you at the maven doc page i like for this
+[20:14] <niloc132> https://maven.apache.org/guides/introduction/introduction-to-the-pom.html
+[20:15] <niloc132> you at least want aggregation, but also likely inheritance so you can define plugins and configs and such once and then use them without having to tweak too much
+[20:15] <niloc132> in each proj-X/pom.xml
+[20:17] <niloc132> dinner, back later, but that link is like 40% of maven in a single file
+[20:18] <niloc132> another 40% is the phase list and how to map goals, and then the remaining 20% in true 80/20 rule is using it until you hate everything
+[20:18] <niloc132> or something like that
+
+
