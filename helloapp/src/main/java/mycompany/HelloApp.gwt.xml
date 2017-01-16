@@ -2,10 +2,10 @@
 <!-- Custom-built GWT. You probably want to uncomment the DOCTYPE and point it to your GWT checkout
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 0.0.0//EN" "file:///path/to/gwt/checkout/distro-source/core/src/gwt-module.dtd">
 -->
-<module rename-to='HelloApp'>
+<module rename-to="HelloApp">
   <!-- Inherit the core Web Toolkit stuff.                        -->
-  <inherits name='com.google.gwt.core.Core'/>
-  <inherits name='sharedlibrary'/>
+  <inherits name="com.google.gwt.core.Core"/>
+  <inherits name="sharedlibrary.SharedLibrary"/>
 
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
@@ -17,10 +17,10 @@
   <!-- Other module inherits                                      -->
 
   <!-- Specify the app entry point class.                         -->
-  <entry-point class='mycompany.client.HelloApp'/>
+  <entry-point class="mycompany.client.HelloApp"/>
 
-  <!-- Specify the paths for translatable code                    -->
-  <source path='client'/>
+  <!-- IMPLICICIT Specify the paths for translatable code                    -->
+  <source path="client"/>
 
   <!-- allow Super Dev Mode -->
   <add-linker name="xsiframe"/>
