@@ -1,4 +1,4 @@
-package sharedlibrary;
+package sharedlibrary.client;
 
 public class HappyFuture
 {

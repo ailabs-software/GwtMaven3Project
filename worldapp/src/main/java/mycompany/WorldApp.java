@@ -1,6 +1,6 @@
 package com.mycompany.app;
 
-import sharedlibrary.HappyFuture;
+import sharedlibrary.client.HappyFuture;
 
 /**
  * Hello world!
