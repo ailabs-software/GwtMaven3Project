@@ -33,7 +33,6 @@
           </execution>
         </executions>
         <configuration>
-          <module>SharedLibrary</module>
         </configuration>
       </plugin>
     </plugins>
