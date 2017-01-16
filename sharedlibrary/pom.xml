@@ -20,6 +20,20 @@
   </properties>
 
   <build>
+
+    <!-- you'll only have one <resource> with one <directory> for src/main/java. Needed to share source in JAR.
+    
+    [22:31] <niloc132> ok, so a few things you'll need to gwt-ify
+    [22:31] <niloc132> first, the apps need the library's sources
+    [22:32] <niloc132> either you'll configure it to build a second jar with sources, or build the sources into the jar (i tend toward the latter)
+    
+     -->
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+      </resource>
+    </resources>
+
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
